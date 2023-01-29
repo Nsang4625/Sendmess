@@ -1,13 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Join from './components/Join';
-import Chat from './components/Chat';         
+import Homepage from './Pages/Homepage';
+import ChatPage from './Pages/ChatPage';
+
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" exact element={<Join/>} />
-        <Route path='/chat' element={<Chat/>} />        
+        <Route path="/" exact element={<Homepage />} />
+        <Route path='/chats' element={<ChatPage />} />
       </Routes>
     </Router>
   )
