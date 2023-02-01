@@ -3,19 +3,66 @@ import { Input, InputGroup, InputRightElement } from '@chakra-ui/input'
 import { VStack } from '@chakra-ui/layout'
 import React, { useState } from 'react'
 import { Button } from '@chakra-ui/button'
+import { useToast } from "@chakra-ui/toast";
 
 const Signup = () => {
   const [show, setShow] = useState(false);
-
+  // used to show password
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const toast = useToast();
   function handleClick() {
     setShow(!show);
   }
-  function submitHandler() {
-
+  async function submitHandler() {
+    if (!name || !email || !password || !confirmPassword) {
+      toast({
+        title: "Please Fill all the Feilds",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+    if (password !== confirmpassword) {
+      toast({
+        title: "Passwords Do Not Match",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        "/api/user",
+        {
+          name,
+          email,
+          password,
+          pic,
+        },
+        config
+      );
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        description: error.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
   }
   return (
     <VStack spacing='5px'>

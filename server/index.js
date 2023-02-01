@@ -3,12 +3,18 @@ const http = require('http');
 const socketio = require('socket.io');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const userRoutes = require('./routes/userRoutes');
 
 dotenv.config();
 connectDB();
 
 const PORT = process.env.PORT || 5000;
 const app = express();
+app.use(express.json());
+app.use('/api/user', userRoutes);
+app.all('*', (req, res, next) => {
+  throw new Error('Not found');
+});
 const server = http.createServer(app);
 
 io.on('connection', (socket) => {
