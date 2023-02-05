@@ -4,6 +4,7 @@ const socketio = require('socket.io');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 
 dotenv.config();
 connectDB();
@@ -11,7 +12,10 @@ connectDB();
 const PORT = process.env.PORT || 5000;
 const app = express();
 app.use(express.json());
+
 app.use('/api/user', userRoutes);
+app.use('/api/chat', chatRoutes);
+
 app.all('*', (req, res, next) => {
   throw new Error('Not found');
 });

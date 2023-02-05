@@ -47,4 +47,15 @@ exports.auth = asyncHandler(async (req, res) => {
       password: user.password
     });
   }
-})
+});
+
+exports.allUsers = asyncHandler(async (req, res) => {
+  const keyword = req.query.search ? {
+    $or: [
+      { name: { $regex: req.query.search, $option: 'i' } },
+      { email: { $regex: req.query.search, $option: 'i' } }
+    ]
+  } : {}
+  const user = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+  res.send(user);
+});
