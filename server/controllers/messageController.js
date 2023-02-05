@@ -29,4 +29,14 @@ const sendMessage = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = { sendMessage }
+const fetchMessage = asyncHandler(async (req, res) => {
+    try {
+        const messages = await Message.findById(req.params.chatId)
+            .populate('sender', 'name pic')
+            .populate('chat');
+        res.status(200).json(messages);
+    } catch (error) {
+        throw new Error(error.message);
+    }
+})
+module.exports = { sendMessage, fetchMessage }
