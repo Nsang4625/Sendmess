@@ -1,6 +1,6 @@
 const express = require('express');
 const http = require('http');
-const socketio = require('socket.io');
+const { Server } = require('socket.io');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
@@ -23,8 +23,29 @@ app.all('*', (req, res, next) => {
 });
 const server = http.createServer(app);
 
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: 'http://localhost:3000'
+  }
+})
 io.on('connection', (socket) => {
   console.log('We had a new connection');
+  socket.on('setup', (userData) => {
+    socket.join(userData);
+    socket.emit("connected");
+  });
+  socket.on('join chat', (room) => {
+    socket.join(room);
+  });
+  socket.on('new message', (newMessageReceived) => {
+    let chat = newMessageReceived.chat;
+    if (!chat.users) return;
+    chat.users.forEach((user) => {
+      if (user._id === newMessageReceived.sender._id) return;
+      socket.in(user._id).emit('message received', newMessageReceived);
+    })
+  })
   socket.on('disconnect', () => {
     console.log('User had left');
   })
